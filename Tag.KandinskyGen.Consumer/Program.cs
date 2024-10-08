@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 
 IConfiguration _functionConfig;
 GenerationRequestOptions _generationRequestOptions = new();
+KandinskyOptions _kandinskyOptions = new();
 
 _functionConfig = new ConfigurationBuilder()
     .AddEnvironmentVariables()
@@ -19,8 +20,10 @@ var host = new HostBuilder()
         services.ConfigureFunctionsApplicationInsights();
 
         _functionConfig.GetSection(nameof(GenerationRequestOptions)).Bind(_generationRequestOptions);
+        _functionConfig.GetSection(nameof(KandinskyOptions)).Bind(_kandinskyOptions);
         
         services.AddGenerationRequestManager(_generationRequestOptions);
+        services.AddKandinskyManager(_kandinskyOptions);
     })
     .Build();
 

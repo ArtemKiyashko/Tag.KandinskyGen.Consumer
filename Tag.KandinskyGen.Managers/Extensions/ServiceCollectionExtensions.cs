@@ -1,7 +1,9 @@
+using Azure.Core;
 using Azure.Data.Tables;
 using Azure.Identity;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Identity.Client;
 using Tag.KandinskyGen.Repositories;
 
 namespace Tag.KandinskyGen.Managers.Extensions;
@@ -32,6 +34,25 @@ public static class ServiceCollectionExtensions
             return new GenerationRequestRepository(tableClient);
         });
 
+        return services;
+    }
+
+    public static IServiceCollection AddKandinskyManager(this IServiceCollection services, KandinskyOptions options)
+    {
+        services.AddSingleton<IKandinskyManager, KandinskyManager>();
+        services.AddHttpClient<IKandinskyRepository, KandinskyRepository>(client =>
+        {
+            client.BaseAddress = options.BaseAddress;
+            client.DefaultRequestHeaders.Add("X-Key", options.XKey);
+            client.DefaultRequestHeaders.Add("X-Secret", options.XSecret);
+        });
+        services.Configure<KandinskyOptions>((builder) =>
+        {
+            builder.BaseAddress = options.BaseAddress;
+            builder.PictureHeight = options.PictureHeight;
+            builder.PictureWidth = options.PictureWidth;
+            builder.PictureStyle = options.PictureStyle;
+        });
         return services;
     }
 }

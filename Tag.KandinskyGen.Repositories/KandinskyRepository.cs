@@ -1,5 +1,5 @@
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
 using Tag.KandinskyGen.Repositories.Entities;
 
@@ -12,18 +12,20 @@ internal class KandinskyRepository(HttpClient httpClient) : IKandinskyRepository
     public async Task<KandinskyGeneratioRequestResultEntity?> EnqueueGeneration(KandinskyGenerationRequestEntity entity)
     {
         var paramsJson = JsonSerializer.Serialize(entity.Params);
-        using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(paramsJson));
-        using var fileHttpContent = new StreamContent(memoryStream);
+        using var paramsContent = new StringContent(paramsJson, new MediaTypeHeaderValue("application/json"));
 
-        using var stringContent = new StringContent(entity.ModelId.ToString());
+        using var modelId = new StringContent(entity.ModelId.ToString());
 
         using var formData = new MultipartFormDataContent
         {
-            { fileHttpContent, "params" },
-            { stringContent, "model_id" }
+            { paramsContent, "params" },
+            { modelId, "model_id" }
         };
 
         var resultResponse = await _httpClient.PostAsync("key/api/v1/text2image/run", formData);
+
+        if (!resultResponse.IsSuccessStatusCode)
+            throw new InvalidOperationException(resultResponse.ReasonPhrase);
 
         return await JsonSerializer.DeserializeAsync<KandinskyGeneratioRequestResultEntity>(await resultResponse.Content.ReadAsStreamAsync());
     }
