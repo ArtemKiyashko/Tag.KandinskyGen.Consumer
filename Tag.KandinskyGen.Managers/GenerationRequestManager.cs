@@ -9,16 +9,18 @@ internal class GenerationRequestManager(IGenerationRequestRepository generationR
 {
     private readonly IGenerationRequestRepository _generationRequestRepository = generationRequestRepository;
 
-    public async Task AddGenerationActivity(GenerationRequestDto generationRequest)
+    public async Task AddGenerationActivity(GenerationActivityRequestDto generationActivityRequest)
     {
         var entity = new GenerationActivityEntity
         {
-            PartitionKey = generationRequest.GenerationRequestedDateTime.UtcDateTime.ToString("dd-MM-yyyy"),
-            RowKey = generationRequest.RequestId.ToString(),
-            ChatTgId = generationRequest.ChatTgId,
-            GenerationRequestedDateTime = generationRequest.GenerationRequestedDateTime,
+            PartitionKey = generationActivityRequest.GenerationRequestedDateTime.UtcDateTime.ToString("dd-MM-yyyy"),
+            RowKey = generationActivityRequest.RequestId.ToString(),
+            ChatTgId = generationActivityRequest.ChatTgId,
+            GenerationRequestedDateTime = generationActivityRequest.GenerationRequestedDateTime,
             GenerationStatus = GenerationStatuses.InProgress,
-            StartedDateTime = DateTimeOffset.UtcNow
+            StartedDateTime = DateTimeOffset.UtcNow,
+            Prompt = generationActivityRequest.Prompt,
+            Uuid = generationActivityRequest.Uuid
         };
 
         await _generationRequestRepository.InsertGenerationActivity(entity);

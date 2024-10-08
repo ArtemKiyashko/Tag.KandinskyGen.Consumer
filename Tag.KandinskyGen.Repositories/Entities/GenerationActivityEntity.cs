@@ -11,4 +11,6 @@ public class GenerationActivityEntity : BaseEntity
     public required DateTimeOffset GenerationRequestedDateTime { get; set; }
     public string? ResultContainer { get; set; }
     public string? ResultPath { get; set; }
+    public required string Prompt { get; set; }
+    public required string Uuid { get; set; }
 }

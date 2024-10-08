@@ -1,6 +1,8 @@
-namespace Tag.KandinskyGen.Managers.Dtos;
+using Tag.KandinskyGen.Managers.Dtos;
 
-public class GenerationRequestDto
+namespace Tag.KandinskyGen.Consumer.ViewModels;
+
+public class GenerationRequestViewModel
 {
     public required Guid RequestId { get; set; }
     public required GenerateRequestTypes RequestType { get; set; }

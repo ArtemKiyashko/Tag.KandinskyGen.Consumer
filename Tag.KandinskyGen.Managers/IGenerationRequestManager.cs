@@ -4,5 +4,5 @@ namespace Tag.KandinskyGen.Managers;
 
 public interface IGenerationRequestManager
 {
-    Task AddGenerationActivity(GenerationRequestDto generationActivity);
+    Task AddGenerationActivity(GenerationActivityRequestDto generationActivity);
 }
