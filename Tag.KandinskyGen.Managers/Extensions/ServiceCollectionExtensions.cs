@@ -1,9 +1,7 @@
-using Azure.Core;
 using Azure.Data.Tables;
 using Azure.Identity;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Identity.Client;
 using Tag.KandinskyGen.Repositories;
 
 namespace Tag.KandinskyGen.Managers.Extensions;
@@ -48,10 +46,7 @@ public static class ServiceCollectionExtensions
         });
         services.Configure<KandinskyOptions>((builder) =>
         {
-            builder.BaseAddress = options.BaseAddress;
-            builder.PictureHeight = options.PictureHeight;
-            builder.PictureWidth = options.PictureWidth;
-            builder.PictureStyle = options.PictureStyle;
+            builder = options;
         });
         return services;
     }
