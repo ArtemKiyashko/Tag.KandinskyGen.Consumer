@@ -10,6 +10,7 @@ internal class KandinskyRetryDecorator(IKandinskyRepository repository) : IKandi
     public Task<KandinskyGeneratioRequestResultEntity?> EnqueueGeneration(KandinskyGenerationRequestEntity entity)
         => Policy
             .Handle<HttpRequestException>()
+            .Or<InvalidOperationException>()
             .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
             .ExecuteAsync(async () => await _repository.EnqueueGeneration(entity));
 
@@ -22,6 +23,7 @@ internal class KandinskyRetryDecorator(IKandinskyRepository repository) : IKandi
     public Task<bool> ModelIsActive(int modelId)
         => Policy
             .HandleResult(false)
+            .Or<HttpRequestException>()
             .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
             .ExecuteAsync(async () => await _repository.ModelIsActive(modelId));
 }
