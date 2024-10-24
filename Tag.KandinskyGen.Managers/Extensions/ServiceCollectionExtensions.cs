@@ -3,6 +3,7 @@ using Azure.Identity;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 using Tag.KandinskyGen.Repositories;
+using Tag.KandinskyGen.Repositories.Decorators;
 
 namespace Tag.KandinskyGen.Managers.Extensions;
 
@@ -44,6 +45,7 @@ public static class ServiceCollectionExtensions
             client.DefaultRequestHeaders.Add("X-Key", options.XKey);
             client.DefaultRequestHeaders.Add("X-Secret", options.XSecret);
         });
+        services.Decorate<IKandinskyRepository, KandinskyRetryDecorator>();
         services.Configure<KandinskyOptions>((builder) =>
         {
             builder = options;
