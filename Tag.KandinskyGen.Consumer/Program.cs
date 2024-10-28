@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Tag.KandinskyGen.Managers;
 using Tag.KandinskyGen.Managers.Extensions;
 using Microsoft.Extensions.Configuration;
+using Telegram.Bot;
+using Tag.KandinskyGen.Consumer;
 
 IConfiguration _functionConfig;
 GenerationRequestOptions _generationRequestOptions = new();
@@ -24,6 +26,13 @@ var host = new HostBuilder()
         
         services.AddGenerationRequestManager(_generationRequestOptions);
         services.AddKandinskyManager(_kandinskyOptions);
+
+        services.AddSingleton<ITelegramBotClient>(factory => {
+            var botToken = _functionConfig.GetValue<string>("TELEGRAM_BOT_TOKEN") ?? throw new ArgumentException("Bot token required", "TELEGRAM_BOT_TOKEN");
+            return new TelegramBotClient(botToken);
+        });
+
+        services.AddSingleton<IMessageValidator, MessageValidator>();
     })
     .Build();
 

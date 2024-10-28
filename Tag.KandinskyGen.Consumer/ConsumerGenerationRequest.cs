@@ -9,11 +9,13 @@ namespace Tag.KandinskyGen.Consumer
     public class ConsumerGenerationRequest(
         ILogger<ConsumerGenerationRequest> logger, 
         IGenerationRequestManager generationRequestManager, 
-        IKandinskyManager kandinskyManager)
+        IKandinskyManager kandinskyManager,
+        IMessageValidator messageValidator)
     {
         private readonly ILogger<ConsumerGenerationRequest> _logger = logger;
         private readonly IGenerationRequestManager _generationRequestManager = generationRequestManager;
         private readonly IKandinskyManager _kandinskyManager = kandinskyManager;
+        private readonly IMessageValidator _messageValidator = messageValidator;
 
         [Function(nameof(ConsumerGenerationRequest))]
         public async Task Run(
@@ -21,7 +23,7 @@ namespace Tag.KandinskyGen.Consumer
             ServiceBusReceivedMessage message,
             ServiceBusMessageActions messageActions)
         {
-            var generationRequestViewModel = await MessageValidator.TryGetGenerationRequest(message, messageActions);
+            var generationRequestViewModel = await _messageValidator.TryGetGenerationRequest(message, messageActions);
             
             var generationResponse = await _kandinskyManager.EnqueueGeneration(
                 generationRequestViewModel.AlternativePrompt ?? generationRequestViewModel.ChatTitle, 
