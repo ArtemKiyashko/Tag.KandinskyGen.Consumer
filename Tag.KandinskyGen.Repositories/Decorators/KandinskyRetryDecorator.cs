@@ -20,6 +20,12 @@ internal class KandinskyRetryDecorator(IKandinskyRepository repository) : IKandi
             .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
             .ExecuteAsync(_repository.GetModels);
 
+    public Task<IList<KandinskyStyleEntity>?> GetStyles()
+        => Policy
+            .Handle<HttpRequestException>()
+            .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
+            .ExecuteAsync(_repository.GetStyles);
+
     public Task<bool> ModelIsActive(int modelId)
         => Policy
             .HandleResult(false)

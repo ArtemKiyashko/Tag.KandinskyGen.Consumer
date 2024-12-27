@@ -18,6 +18,11 @@ internal class KandinskyManager(IKandinskyRepository kandinskyRepository, IOptio
         var latestTxt2ImageModel = models.Where(m => m.Type == "TEXT2IMAGE").OrderByDescending(m => m.Version).FirstOrDefault();
         ArgumentNullException.ThrowIfNull(latestTxt2ImageModel);
 
+        var styles = await _kandinskyRepository.GetStyles();
+        ArgumentNullException.ThrowIfNull(styles);
+
+        var currentStyle = styles[Random.Shared.Next(styles.Count())];
+
         var modelIsAvailable = await _kandinskyRepository.ModelIsActive(latestTxt2ImageModel.Id);
 
         if (!modelIsAvailable)
@@ -34,7 +39,7 @@ internal class KandinskyManager(IKandinskyRepository kandinskyRepository, IOptio
                 GenerateParams = new KandinskyGenerateParamsEntity
                 {
                     Query = prompt,
-                    Style = _options.PictureStyle
+                    Style = _options.PictureStyle ?? currentStyle?.Name
                 }
             }
         };

@@ -36,6 +36,12 @@ internal class KandinskyRepository(HttpClient httpClient) : IKandinskyRepository
         return result;
     }
 
+    public async Task<IList<KandinskyStyleEntity>?> GetStyles()
+    {
+        var result = await _httpClient.GetFromJsonAsync<List<KandinskyStyleEntity>>("https://cdn.fusionbrain.ai/static/styles/key");
+        return result;
+    }
+
     public async Task<bool> ModelIsActive(int modelId)
     {
         var result = await _httpClient.GetFromJsonAsync<KandinskyModelStatusEntity>($"key/api/v1/text2image/availability?model_id={modelId}");
