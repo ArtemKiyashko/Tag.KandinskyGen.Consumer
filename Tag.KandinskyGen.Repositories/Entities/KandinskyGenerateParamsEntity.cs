@@ -6,8 +6,4 @@ public class KandinskyGenerateParamsEntity
 {
     [JsonPropertyName("query")]
     public required string Query { get; set; }
-
-    [JsonPropertyName("style")]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public string? Style { get; set; }
 }

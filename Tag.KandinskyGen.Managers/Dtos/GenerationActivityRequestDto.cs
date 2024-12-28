@@ -8,4 +8,5 @@ public class GenerationActivityRequestDto
     public required DateTimeOffset GenerationRequestedDateTime { get; set; }
     public required string Uuid { get; set; }
     public required string Prompt { get; set; }
+    public string? JsonPayload { get; set; }
 }

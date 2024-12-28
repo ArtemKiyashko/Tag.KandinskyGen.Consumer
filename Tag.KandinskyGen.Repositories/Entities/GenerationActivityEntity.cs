@@ -13,4 +13,5 @@ public class GenerationActivityEntity : BaseEntity
     public string? ResultPath { get; set; }
     public required string Prompt { get; set; }
     public required string Uuid { get; set; }
+    public string? JsonPayload { get; set; }
 }

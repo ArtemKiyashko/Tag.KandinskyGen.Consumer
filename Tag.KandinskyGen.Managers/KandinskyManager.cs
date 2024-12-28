@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Tag.KandinskyGen.Managers.Dtos;
 using Tag.KandinskyGen.Repositories;
@@ -36,10 +37,10 @@ internal class KandinskyManager(IKandinskyRepository kandinskyRepository, IOptio
                 NumImages = 1,
                 Width = _options.PictureWidth,
                 Height = _options.PictureHeight,
+                Style = _options.PictureStyle ?? currentStyle?.Name,
                 GenerateParams = new KandinskyGenerateParamsEntity
                 {
-                    Query = prompt,
-                    Style = _options.PictureStyle ?? currentStyle?.Name
+                    Query = prompt
                 }
             }
         };
@@ -50,7 +51,8 @@ internal class KandinskyManager(IKandinskyRepository kandinskyRepository, IOptio
         return new GenerationResponseDto{
             ChatTgId = chatTgid,
             Prompt = prompt,
-            Uuid = genResult.Uuid
+            Uuid = genResult.Uuid,
+            JsonPayload = JsonSerializer.Serialize(entity)
         };
     }
 }

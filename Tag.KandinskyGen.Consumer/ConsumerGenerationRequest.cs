@@ -36,7 +36,8 @@ namespace Tag.KandinskyGen.Consumer
                 RequestType = generationRequestViewModel.RequestType,
                 GenerationRequestedDateTime = generationRequestViewModel.GenerationRequestedDateTime,
                 Uuid = generationResponse.Uuid,
-                Prompt = generationResponse.Prompt
+                Prompt = generationResponse.Prompt,
+                JsonPayload = generationResponse.JsonPayload
             };
 
             await _generationRequestManager.AddGenerationActivity(genActivityRequestDto);

@@ -15,6 +15,10 @@ public class KandinskyParamsEntity
 
     [JsonPropertyName("height")]
     public required uint Height { get; set; }
+    
+    [JsonPropertyName("style")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? Style { get; set; }
 
     [JsonPropertyName("generateParams")]
    public required KandinskyGenerateParamsEntity GenerateParams { get; set; }

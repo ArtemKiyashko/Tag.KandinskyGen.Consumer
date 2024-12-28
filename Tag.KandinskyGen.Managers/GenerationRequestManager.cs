@@ -20,7 +20,8 @@ internal class GenerationRequestManager(IGenerationRequestRepository generationR
             GenerationStatus = GenerationStatuses.InProgress,
             StartedDateTime = DateTimeOffset.UtcNow,
             Prompt = generationActivityRequest.Prompt,
-            Uuid = generationActivityRequest.Uuid
+            Uuid = generationActivityRequest.Uuid,
+            JsonPayload = generationActivityRequest.JsonPayload
         };
 
         await _generationRequestRepository.InsertGenerationActivity(entity);
