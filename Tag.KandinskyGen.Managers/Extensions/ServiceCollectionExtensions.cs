@@ -1,5 +1,6 @@
 using Azure.Data.Tables;
 using Azure.Identity;
+using LazyCache;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
 using Tag.KandinskyGen.Repositories;
@@ -45,6 +46,9 @@ public static class ServiceCollectionExtensions
             client.DefaultRequestHeaders.Add("X-Key", options.XKey);
             client.DefaultRequestHeaders.Add("X-Secret", options.XSecret);
         });
+
+        services.AddSingleton<IAppCache, CachingService>();
+        services.Decorate<IKandinskyRepository, KandinskyFakeDataDecorator>();
         services.Decorate<IKandinskyRepository, KandinskyRetryDecorator>();
         services.Configure<KandinskyOptions>((builder) =>
         {
