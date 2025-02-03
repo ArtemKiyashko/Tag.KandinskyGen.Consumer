@@ -48,8 +48,10 @@ public static class ServiceCollectionExtensions
         });
 
         services.AddSingleton<IAppCache, CachingService>();
-        services.Decorate<IKandinskyRepository, KandinskyFakeDataDecorator>();
+        if (options.UseFakeData)
+            services.Decorate<IKandinskyRepository, KandinskyFakeDataDecorator>();
         services.Decorate<IKandinskyRepository, KandinskyRetryDecorator>();
+        services.Decorate<IKandinskyRepository, KandinskyCacheDecorator>();
         services.Configure<KandinskyOptions>((builder) =>
         {
             builder = options;
