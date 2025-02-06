@@ -3,19 +3,22 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Tag.KandinskyGen.Managers;
 using Tag.KandinskyGen.Managers.Dtos;
+using Telegram.Bot;
 
 namespace Tag.KandinskyGen.Consumer
 {
     public class ConsumerGenerationRequest(
-        ILogger<ConsumerGenerationRequest> logger, 
-        IGenerationRequestManager generationRequestManager, 
+        ILogger<ConsumerGenerationRequest> logger,
+        IGenerationRequestManager generationRequestManager,
         IKandinskyManager kandinskyManager,
-        IMessageValidator messageValidator)
+        IMessageValidator messageValidator,
+        ITelegramBotClient telegramBotClient)
     {
         private readonly ILogger<ConsumerGenerationRequest> _logger = logger;
         private readonly IGenerationRequestManager _generationRequestManager = generationRequestManager;
         private readonly IKandinskyManager _kandinskyManager = kandinskyManager;
         private readonly IMessageValidator _messageValidator = messageValidator;
+        private readonly ITelegramBotClient _telegramBotClient = telegramBotClient;
 
         [Function(nameof(ConsumerGenerationRequest))]
         public async Task Run(
@@ -23,11 +26,32 @@ namespace Tag.KandinskyGen.Consumer
             ServiceBusReceivedMessage message,
             ServiceBusMessageActions messageActions)
         {
+            GenerationResponseDto generationResponse;
+
             var generationRequestViewModel = await _messageValidator.TryGetGenerationRequest(message, messageActions);
-            
-            var generationResponse = await _kandinskyManager.EnqueueGeneration(
-                generationRequestViewModel.AlternativePrompt ?? generationRequestViewModel.ChatTitle, 
-                generationRequestViewModel.ChatTgId);
+
+            try
+            {
+                generationResponse = await _kandinskyManager.EnqueueGeneration(
+                    generationRequestViewModel.AlternativePrompt ?? generationRequestViewModel.ChatTitle,
+                    generationRequestViewModel.ChatTgId);
+            }
+            catch (InvalidOperationException)
+            {
+                if (message.DeliveryCount == 10)
+                {
+                    await _telegramBotClient.SendTextMessageAsync(chatId: generationRequestViewModel.ChatTgId, text: "Модель в данный момент недоступна. Попробуйте позже.");
+                }
+                throw;
+            }
+            catch (Exception)
+            {
+                if (message.DeliveryCount == 10)
+                {
+                    await _telegramBotClient.SendTextMessageAsync(chatId: generationRequestViewModel.ChatTgId, text: "Произошла ошибка при обработке запроса. Попробуйте позже.");
+                }
+                throw;
+            }
 
             var genActivityRequestDto = new GenerationActivityRequestDto
             {
