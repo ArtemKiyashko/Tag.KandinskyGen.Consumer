@@ -24,11 +24,6 @@ internal class KandinskyManager(IKandinskyRepository kandinskyRepository, IOptio
 
         var currentStyle = styles[Random.Shared.Next(styles.Count())];
 
-        var modelIsAvailable = await _kandinskyRepository.ModelIsActive(latestTxt2ImageModel.Id);
-
-        if (!modelIsAvailable)
-            throw new InvalidOperationException($"Model (id: {latestTxt2ImageModel.Id}) is not available this time");
-
         var entity = new KandinskyGenerationRequestEntity
         {
             ModelId = latestTxt2ImageModel.Id,
