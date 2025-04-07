@@ -54,7 +54,13 @@ public static class ServiceCollectionExtensions
         services.Decorate<IKandinskyRepository, KandinskyCacheDecorator>();
         services.Configure<KandinskyOptions>((builder) =>
         {
-            builder = options;
+            builder.BaseAddress = options.BaseAddress;
+            builder.XKey = options.XKey;
+            builder.XSecret = options.XSecret;
+            builder.PictureWidth = options.PictureWidth;
+            builder.PictureHeight = options.PictureHeight;
+            builder.PictureStyle = options.PictureStyle;
+            builder.UseFakeData = options.UseFakeData;            
         });
         return services;
     }
