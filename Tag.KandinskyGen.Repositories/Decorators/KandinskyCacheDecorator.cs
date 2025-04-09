@@ -10,9 +10,9 @@ internal class KandinskyCacheDecorator(IKandinskyRepository repository, IAppCach
     private readonly IKandinskyRepository _repository = repository;
     public Task<KandinskyGeneratioRequestResultEntity?> EnqueueGeneration(KandinskyGenerationRequestEntity entity) => _repository.EnqueueGeneration(entity);
 
-    public Task<IEnumerable<KandinskyModelEntity>?> GetModels() => _appCache.GetOrAdd("models", _repository.GetModels);
+    public Task<IEnumerable<KandinskyPipelineEntity>?> GetPipelines() => _appCache.GetOrAdd("pipelines", _repository.GetPipelines);
 
     public Task<IList<KandinskyStyleEntity>?> GetStyles() => _appCache.GetOrAdd("styles", _repository.GetStyles);
 
-    public Task<bool> ModelIsActive(int modelId) => _appCache.GetOrAdd($"modelisactive_{modelId}", () => _repository.ModelIsActive(modelId));
+    public Task<bool> PipelineIsActive(Guid pipelineId) => _appCache.GetOrAdd($"modelisactive_{pipelineId}", () => _repository.PipelineIsActive(pipelineId));
 }

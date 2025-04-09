@@ -14,11 +14,11 @@ internal class KandinskyRetryDecorator(IKandinskyRepository repository) : IKandi
             .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
             .ExecuteAsync(async () => await _repository.EnqueueGeneration(entity));
 
-    public Task<IEnumerable<KandinskyModelEntity>?> GetModels() 
+    public Task<IEnumerable<KandinskyPipelineEntity>?> GetPipelines() 
         => Policy
             .Handle<HttpRequestException>()
             .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
-            .ExecuteAsync(_repository.GetModels);
+            .ExecuteAsync(_repository.GetPipelines);
 
     public Task<IList<KandinskyStyleEntity>?> GetStyles()
         => Policy
@@ -26,10 +26,10 @@ internal class KandinskyRetryDecorator(IKandinskyRepository repository) : IKandi
             .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
             .ExecuteAsync(_repository.GetStyles);
 
-    public Task<bool> ModelIsActive(int modelId)
+    public Task<bool> PipelineIsActive(Guid pipelineId)
         => Policy
             .HandleResult(false)
             .Or<HttpRequestException>()
             .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
-            .ExecuteAsync(async () => await _repository.ModelIsActive(modelId));
+            .ExecuteAsync(async () => await _repository.PipelineIsActive(pipelineId));
 }

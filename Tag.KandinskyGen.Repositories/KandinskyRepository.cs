@@ -14,15 +14,15 @@ internal class KandinskyRepository(HttpClient httpClient) : IKandinskyRepository
         var paramsJson = JsonSerializer.Serialize(entity.Params);
         using var paramsContent = new StringContent(paramsJson, new MediaTypeHeaderValue("application/json"));
 
-        using var modelId = new StringContent(entity.ModelId.ToString());
+        using var PipelineId = new StringContent(entity.PipelineId.ToString());
 
         using var formData = new MultipartFormDataContent
         {
             { paramsContent, "params" },
-            { modelId, "model_id" }
+            { PipelineId, "pipeline_id" }
         };
 
-        var resultResponse = await _httpClient.PostAsync("key/api/v1/text2image/run", formData);
+        var resultResponse = await _httpClient.PostAsync("key/api/v1/pipeline/run", formData);
 
         if (!resultResponse.IsSuccessStatusCode)
             throw new InvalidOperationException(resultResponse.ReasonPhrase);
@@ -30,9 +30,9 @@ internal class KandinskyRepository(HttpClient httpClient) : IKandinskyRepository
         return await JsonSerializer.DeserializeAsync<KandinskyGeneratioRequestResultEntity>(await resultResponse.Content.ReadAsStreamAsync());
     }
 
-    public async Task<IEnumerable<KandinskyModelEntity>?> GetModels()
+    public async Task<IEnumerable<KandinskyPipelineEntity>?> GetPipelines()
     {
-        var result = await _httpClient.GetFromJsonAsync<List<KandinskyModelEntity>>("key/api/v1/models");
+        var result = await _httpClient.GetFromJsonAsync<List<KandinskyPipelineEntity>>("key/api/v1/pipelines");
         return result;
     }
 
@@ -42,9 +42,9 @@ internal class KandinskyRepository(HttpClient httpClient) : IKandinskyRepository
         return result;
     }
 
-    public async Task<bool> ModelIsActive(int modelId)
+    public async Task<bool> PipelineIsActive(Guid pipelineId)
     {
-        var result = await _httpClient.GetFromJsonAsync<KandinskyModelStatusEntity>($"key/api/v1/text2image/availability?model_id={modelId}");
+        var result = await _httpClient.GetFromJsonAsync<KandinskyPiplineStatusEntity>($"key/api/v1/pipeline/{pipelineId}/availability");
         return result is not null && result.Status == "ACTIVE";
     }
 }

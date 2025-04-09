@@ -8,19 +8,20 @@ internal class KandinskyFakeDataDecorator(IKandinskyRepository repository) : IKa
 
     public Task<KandinskyGeneratioRequestResultEntity?> EnqueueGeneration(KandinskyGenerationRequestEntity entity) => _repository.EnqueueGeneration(entity);
 
-    public Task<IEnumerable<KandinskyModelEntity>?> GetModels()
+    public Task<IEnumerable<KandinskyPipelineEntity>?> GetPipelines()
     {
-        IEnumerable<KandinskyModelEntity> models =
+        IEnumerable<KandinskyPipelineEntity> pipelines =
         [
             new() {
-                Id = 4,
+                Id = new Guid("a17740da-e8a0-4816-876a-74326c5c4cef"),
                 Name = "Kandinsky",
                 Version = 3.1f,
-                Type = "TEXT2IMAGE"
+                Type = "TEXT2IMAGE",
+                Status = "ACTIVE"
             }
         ];
 
-        return Task.FromResult(models);
+        return Task.FromResult(pipelines);
     }
 
     public Task<IList<KandinskyStyleEntity>?> GetStyles()
@@ -57,5 +58,5 @@ internal class KandinskyFakeDataDecorator(IKandinskyRepository repository) : IKa
         return Task.FromResult(styles);
     }
 
-    public Task<bool> ModelIsActive(int modelId) => Task.FromResult(true);
+    public Task<bool> PipelineIsActive(Guid pipelineId) => Task.FromResult(true);
 }

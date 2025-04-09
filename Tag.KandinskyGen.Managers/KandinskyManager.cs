@@ -13,20 +13,20 @@ internal class KandinskyManager(IKandinskyRepository kandinskyRepository, IOptio
 
     public async Task<GenerationResponseDto> EnqueueGeneration(string prompt, long chatTgid)
     {
-        var models = await _kandinskyRepository.GetModels();
-        ArgumentNullException.ThrowIfNull(models);
+        var pipelines = await _kandinskyRepository.GetPipelines();
+        ArgumentNullException.ThrowIfNull(pipelines);
 
-        var latestTxt2ImageModel = models.Where(m => m.Type == "TEXT2IMAGE").OrderByDescending(m => m.Version).FirstOrDefault();
+        var latestTxt2ImageModel = pipelines.Where(m => m.Type == "TEXT2IMAGE" && m.Status == "ACTIVE").OrderByDescending(m => m.Version).FirstOrDefault();
         ArgumentNullException.ThrowIfNull(latestTxt2ImageModel);
 
         var styles = await _kandinskyRepository.GetStyles();
         ArgumentNullException.ThrowIfNull(styles);
 
-        var currentStyle = styles[Random.Shared.Next(styles.Count())];
+        var currentStyle = styles[Random.Shared.Next(styles.Count)];
 
         var entity = new KandinskyGenerationRequestEntity
         {
-            ModelId = latestTxt2ImageModel.Id,
+            PipelineId = latestTxt2ImageModel.Id,
             Params = new KandinskyParamsEntity
             {
                 NumImages = 1,

@@ -9,4 +9,7 @@ public class KandinskyGeneratioRequestResultEntity
 
     [JsonPropertyName("uuid")]
     public required string Uuid { get; set; }
+
+    [JsonPropertyName("status_time")]
+    public int? StatusTime { get; set; }
 }
